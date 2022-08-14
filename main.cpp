@@ -2,7 +2,7 @@
 
 #include "core/dal/dal.h"
 using namespace std;
-
+//comment
 int main()
 {
 
