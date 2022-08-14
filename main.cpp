@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Header.h"
+#include "core/dal/dal.h"
 using namespace std;
 
 int main()
@@ -14,8 +14,8 @@ int main()
 
 
     //create("Heyeman");
-    fetch("")
-
+    fetch("user", "users");
+    
 
 
 
@@ -23,3 +23,4 @@ int main()
     system("pause");
     return 0;
 }
+werwW

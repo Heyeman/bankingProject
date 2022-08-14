@@ -8,8 +8,9 @@
 #include <cppconn/prepared_statement.h>
 using namespace std;
 using namespace sql;
+//sample
 
 void checkRun();
 
-void create(string dbname);
+
 void fetch(string dbname, string tbName);

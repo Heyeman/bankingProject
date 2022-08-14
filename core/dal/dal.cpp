@@ -65,6 +65,9 @@ void fetch(string dbname, string tbName) {
     resData = res->getMetaData();
     int count = resData->getColumnCount();
     cout << "it has " << count << " entries" << endl;
+    for (int i = 0; i < count; i++) {
+        cout << resData->getColumnName(i) << endl;
+    }
     }
     catch (SQLException e) {
         cout << "Eroooooor  "<<endl;
@@ -77,5 +80,3 @@ void checkRun() {
     cout << "this is running ";
 
 }
-
-void createTable(string db, )
