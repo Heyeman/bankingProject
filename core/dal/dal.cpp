@@ -1,5 +1,5 @@
 
-#include "Header.h"
+#include "dal.h"
 
 using namespace std;
 using namespace sql;
@@ -78,5 +78,35 @@ void fetch(string dbname, string tbName) {
 
 void checkRun() {
     cout << "this is running ";
+
+}
+
+bool insertInto(string db, string table) {
+    driver = get_driver_instance();
+    con = driver->connect(server, username, password);
+    Statement* stmt;
+    PreparedStatement* pstmt;
+
+
+    try {
+    stmt = con->createStatement();
+        stmt->execute("use " + db);
+        cout << "using database" << endl;
+        pstmt = con->prepareStatement("Insert into {} (id, name) values(? , ? )");
+       pstmt->setString(1, "users");
+        pstmt->setInt(2, 2123);
+        
+        pstmt->setString(3, "heyeman");
+        pstmt->execute();
+        
+        return true;
+    }
+    catch (SQLException e) {
+        cout << "***" << e.what() << endl;
+        return false;
+    }
+
+
+
 
 }

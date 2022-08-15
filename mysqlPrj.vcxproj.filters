@@ -21,9 +21,18 @@
     <ClCompile Include="core\dal\dal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core\controllers\controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\dal\dal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\controllers\controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\wrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
