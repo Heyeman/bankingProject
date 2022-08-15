@@ -2,25 +2,16 @@
 int main()
 {
 
-    //delete con;
+   
 
     cout << "Function is gonna start now" << endl;
-    // create("dbdbdb");
-    //checkRun();
-
-
-    //create("Heyeman");
-    //fetch("user", "users");
+   
     
+    //bool createUser(userDetails user, string role);
+    userDetails heyo = { "heyeman", "abdia", "", "", 'M', 0, 50, false, false };
+    createUser(heyo, "user");
 
-   bool res =  insertInto("user", "users");
 
-   if (res) {
-       cout << "was succ" << endl;
-   }
-   else {
-
-   }
 
     system("pause");
     return 0;
