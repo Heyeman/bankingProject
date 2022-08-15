@@ -1,7 +1,4 @@
-#include <iostream>
-
-#include "core/dal/dal.h"
-using namespace std;
+#include "core/wrapper.h"
 
 int main()
 {
@@ -10,17 +7,22 @@ int main()
 
     cout << "Function is gonna start now" << endl;
     // create("dbdbdb");
-    checkRun();
+    //checkRun();
 
 
     //create("Heyeman");
-    fetch("user", "users");
+    //fetch("user", "users");
     
 
+   bool res =  insertInto("user", "users");
 
+   if (res) {
+       cout << "was succ" << endl;
+   }
+   else {
 
+   }
 
     system("pause");
     return 0;
 }
-werwW
