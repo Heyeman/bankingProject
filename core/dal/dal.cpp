@@ -1,6 +1,5 @@
 
 #include "dal.h"
-
 using namespace std;
 using namespace sql;
 
@@ -8,105 +7,214 @@ using namespace sql;
 const string server = "tcp://127.0.0.1:3306";
 const string username = "root";
 const string password = "8520";
+const string db = "banking";
 
     Driver* driver;
     Connection* con;
     
 
-void create(string dbname) {
-    Statement* stmt;
 
-    driver = get_driver_instance();
-    con = driver->connect(server, username, password);
+bool createUser(userDetails user, string role) {
 
-    if (con->isValid()) {
-        cout << "valid conn"<<endl;
-    }
-    
-    stmt = con->createStatement();
-
-    string dbb = "create database if not exists " + dbname;
-    cout << "dbname is " << dbb<<endl;
-    //dbb.append(dbName);
-    try {
-        stmt->execute(dbb);
-
-        cout << "created successfully" << endl;
-    }
-    catch(SQLException e) {
-        cout << "error is " << endl;
-        cout << e.what()<<endl;
-    }
-    //stmt->executeQuery("Create table if not exists users(id INT, name varchar(200))");
-
-
-    delete stmt;
-
-
-}
-
-void fetch(string dbname, string tbName) {
-
-    Statement* stmt;
-    ResultSet* res;
-    ResultSetMetaData* resData;
-    driver = get_driver_instance();
-    con = driver->connect(server, username, password);
-    if (con->isValid()) {
-        cout << "valid conn" << endl;
-    }
-    stmt = con->createStatement();
-    try {
-        stmt->execute("use " + dbname);
-
-        cout << "connected to db" << endl;
-
-    res = stmt->executeQuery("select * from " + tbName);
-    resData = res->getMetaData();
-    int count = resData->getColumnCount();
-    cout << "it has " << count << " entries" << endl;
-    for (int i = 0; i < count; i++) {
-        cout << resData->getColumnName(i) << endl;
-    }
-    }
-    catch (SQLException e) {
-        cout << "Eroooooor  "<<endl;
-        cout << e.what() << endl;
-    }
-
-}
-
-void checkRun() {
-    cout << "this is running ";
-
-}
-
-bool insertInto(string db, string table) {
-    driver = get_driver_instance();
-    con = driver->connect(server, username, password);
     Statement* stmt;
     PreparedStatement* pstmt;
 
+    driver = get_driver_instance();
+
+    con = driver->connect(server, username, password);
+   
 
     try {
-    stmt = con->createStatement();
+        stmt = con->createStatement();
         stmt->execute("use " + db);
-        cout << "using database" << endl;
-        pstmt = con->prepareStatement("Insert into {} (id, name) values(? , ? )");
-       pstmt->setString(1, "users");
-        pstmt->setInt(2, 2123);
-        
-        pstmt->setString(3, "heyeman");
+       
+        pstmt = con->prepareStatement("insert into users(fname, lname, gender, amount) values (?,?,?,?)");
+        string gend;
+        gend += user.gender;
+        pstmt->setString(1, user.fName);
+        pstmt->setString(2, user.lName);
+        pstmt->setString(3, gend);
+        pstmt->setInt(4, user.amount);
+       
+     
         pstmt->execute();
-        
+
         return true;
     }
     catch (SQLException e) {
-        cout << "***" << e.what() << endl;
+        cout << "**********" << e.what() << endl;
         return false;
+        
     }
 
+}
+
+
+userDetails fetchUser(string userName, string role) {
+
+    Statement* stmt;
+    ResultSet* res;
+
+    driver = get_driver_instance();
+
+    con = driver->connect(server, username, password);
+    
+
+    userDetails user;
+
+    try {
+        stmt = con->createStatement();
+
+        stmt->execute("use " + db);
+
+
+        res = stmt->executeQuery("select * from users where accountNumber = " + userName);
+
+        
+
+        while (res->next()) {
+            if (role == "user") {
+                user.accountNumber = res->getInt(1);
+            }
+            
+        
+            user.fName = res->getString(2);
+            user.lName = res->getString(3);
+            user.gender = res->getString(4)[0];
+            user.amount = res->getInt(5);
+            user.password = res->getString(6);
+            user.isActive = res->getBoolean(7);
+            
+            
+            user.isFound = true;
+            return user;
+        }
+        
 
 
 
+
+
+    }
+    catch (SQLException e) {
+        cout << "**********" << e.what() << endl;
+        return user;
+    }
+
+    return user;
+}
+
+
+
+bool deleteUser(string userName, string role) {
+
+    Statement* stmt;
+  
+
+    driver = get_driver_instance();
+
+    con = driver->connect(server, username, password);
+    
+
+    try {
+        stmt = con->createStatement();
+        stmt->execute("use " + db);
+
+        
+        
+        if (role == "user") {
+            //pstmt = con->prepareStatement("update users set isActive = 0 where accountNumber = ?");
+            bool res = stmt->execute("update users set isActive = 0 where accountNumber = " + userName);
+           
+            return true;
+
+        }
+       
+    }
+    catch (SQLException e) {
+        cout << "**********" << e.what() << endl;
+        return false;
+
+    }
+    cout << "biroo" << endl;
+    
+}
+
+bool updateUser(int accNumber, string field, string value) {
+
+
+    Statement* stmt;
+    PreparedStatement* pstmt;
+
+    driver = get_driver_instance();
+
+    con = driver->connect(server, username, password);
+
+
+    try {
+        stmt = con->createStatement();
+        stmt->execute("use " + db);
+
+        string updateStr = "update users set " + field + " = ? where accountNumber = ?";
+
+        pstmt = con->prepareStatement(updateStr);
+        
+            pstmt->setString(1, value);
+   
+        pstmt->setInt(2, accNumber);
+
+        pstmt->execute();
+
+
+        return true;
+
+
+
+
+       
+
+    }
+    catch (SQLException e) {
+        cout << "**********" << e.what() << endl;
+        return false;
+
+    }
+    
+
+
+}
+
+
+
+bool createTransaction(transactionDetails transaction) {
+
+    Statement* stmt;
+    PreparedStatement* pstmt;
+
+    driver = get_driver_instance();
+
+    con = driver->connect(server, username, password);
+
+
+    try {
+        stmt = con->createStatement();
+        stmt->execute("use " + db);
+
+        pstmt = con->prepareStatement("insert into transactions(type, amount, who, whom) values (?,?,?,?)");
+       
+        pstmt->setString(1, transaction.type);
+        pstmt->setInt(2, transaction.amount);
+        pstmt->setString(3, transaction.who);
+        pstmt->setString(4, transaction.whom);
+
+
+        pstmt->execute();
+
+        return true;
+    }
+    catch (SQLException e) {
+        cout << "**********" << e.what() << endl;
+        return false;
+
+    }
 }

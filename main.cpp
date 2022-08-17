@@ -2,25 +2,28 @@
 int main()
 {
 
-    //delete con;
+   
 
     cout << "Function is gonna start now" << endl;
-    // create("dbdbdb");
-    //checkRun();
-
-
-    //create("Heyeman");
-    //fetch("user", "users");
+   
     
+ /*struct transactionDetails {
+    string type, who, whom;
+    int amount;
+};
 
-   bool res =  insertInto("user", "users");
+    */
 
-   if (res) {
-       cout << "was succ" << endl;
-   }
-   else {
+    transactionDetails transaction = {"airtime", "4", "090990990", 5};
+    Response res = addTransaction(transaction);
+    cout << res.status<<endl;
+    cout << res.errMsg << endl;
 
-   }
+
+     
+   
+
+
 
     system("pause");
     return 0;
