@@ -1,14 +1,15 @@
 #pragma once
 #include "../wrapper.h"
 
-struct userDetails {
-    string fName = "", lName = " ", userName = " ", password = " ";
-    char gender = 'M';
-    int accountNumber = 0, amount = 0;
-    bool isFound = false, isActive = false;
-    
-};
 
 
-userDetails userFetch(string userName, string role);
-bool createUser(userDetails user, string role);
+struct userDetails fetchUser (string userName, string role = "user");
+
+bool createUser(struct userDetails user, string role);
+
+bool deleteUser(string userName, string role = "user");
+
+
+bool updateUser(int accNumber, string field, string value);
+
+bool createTransaction(struct transactionDetails transaction);

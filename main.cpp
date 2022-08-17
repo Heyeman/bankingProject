@@ -7,9 +7,21 @@ int main()
     cout << "Function is gonna start now" << endl;
    
     
-    //bool createUser(userDetails user, string role);
-    userDetails heyo = { "heyeman", "abdia", "", "", 'M', 0, 50, false, false };
-    createUser(heyo, "user");
+ /*struct transactionDetails {
+    string type, who, whom;
+    int amount;
+};
+
+    */
+
+    transactionDetails transaction = {"airtime", "4", "090990990", 5};
+    Response res = addTransaction(transaction);
+    cout << res.status<<endl;
+    cout << res.errMsg << endl;
+
+
+     
+   
 
 
 
