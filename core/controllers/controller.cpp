@@ -1,19 +1,14 @@
 #include "controller.h"
 
 
-
-
-
 Response login(struct loginDetail user, string role) {
 	Response res;
-
-	//search for an account with the loginDetail username
-	//struct userDetails fetchUser (string userName, string role)
 	userDetails currUser = fetchUser(user.username, role);
-	if (currUser.isFound) {
+	if (currUser.isFound && currUser.isActive) {
 		if (currUser.password != user.password) {
 			res.errMsg = "Credentials error";
 			res.error = true;
+			return res;
 		}
 		res.status = 200;
 	}
@@ -27,7 +22,6 @@ Response login(struct loginDetail user, string role) {
 
  Response userCreate(struct userDetails user, string role) {
 	 Response res;
-	 
 	 if (user.fName == "" || user.lName == "" || user.password == "") {
 		 res.errMsg = "Please fill in all the fields";
 		 res.error = true;
@@ -42,11 +36,7 @@ Response login(struct loginDetail user, string role) {
 		 res.errMsg = "cannot create user";
 		 res.error = true;
 	 }
-	 return res;
-
-
-
-	
+	 return res;	
 }
 
  Response userDelete(string userName, string role) {
@@ -58,17 +48,20 @@ Response login(struct loginDetail user, string role) {
 		 res.errMsg = "User not found";
 		 return res;
 	 }
-	 deleteUser(userName, role);
-	 res.status = 203;
-	 return res;
-
+	 if (deleteUser(userName, role)) {
+		 res.status = 203;
+		 return res;
+	 }
+	 else {
+		 return res;
+	 }
 	  
  }
 
  Response addTransaction(struct transactionDetails transaction) {
 	 userDetails owner, target;
 	 Response res;
-	 if (transaction.type == "deposit" || transaction.type == "withdrawal" || transaction.type == "ATM" || transaction.type == "airtime") {
+	 if (transaction.type == "deposit" || transaction.type == "withdraw" || transaction.type == "ATM" ) {
 		 owner = fetchUser(transaction.whom);
 		 if (!owner.isFound ||  !owner.isActive) {
 			 res.errMsg = "Invalid user";
@@ -77,7 +70,7 @@ Response login(struct loginDetail user, string role) {
 
 		 }
 	 }
-	 else if (transaction.type == "transfer") {
+	 else if (transaction.type == "transfer" || transaction.type == "airtime") {
 		 owner = fetchUser(transaction.who);
 		 if (!owner.isFound || !owner.isActive) {
 			 res.errMsg = "Invalid owner";
@@ -97,7 +90,6 @@ Response login(struct loginDetail user, string role) {
 		 if (transaction.amount > owner.amount) {
 
 			 res.errMsg = "Amount above what the user has";
-			 cout << "amout"<<owner.amount << owner.fName;
 			 res.error = true;
 			 return res;
 		 }
@@ -116,14 +108,11 @@ Response login(struct loginDetail user, string role) {
 	 }
 	 bool updateU = updateUser(owner.accountNumber, "amount", to_string(owner.amount));
 	
-
-	 cout << "transaction " << endl;
 	 createTransaction(transaction);
 	 res.status = 201;
 	 res.error = false;
 
 	 return res;
 
-
-
  }
+

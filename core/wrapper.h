@@ -11,6 +11,7 @@ using namespace sql;
 
 #include "dal/dal.h"
 #include "controllers/controller.h"
+#include "views/views.h"
 
 struct userDetails {
     string fName = "", lName = " ", userName = " ", password = " ";
@@ -22,7 +23,7 @@ struct userDetails {
 
 struct transactionDetails {
     string type, who, whom;
-    int amount;
+    int amount = 0;
 };
 
 

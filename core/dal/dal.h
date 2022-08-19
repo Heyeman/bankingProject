@@ -5,7 +5,8 @@
 
 struct userDetails fetchUser (string userName, string role = "user");
 
-bool createUser(struct userDetails user, string role);
+int createUser(struct userDetails user, string role = "user");
+
 
 bool deleteUser(string userName, string role = "user");
 
