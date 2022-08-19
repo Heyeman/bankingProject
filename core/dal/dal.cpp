@@ -14,10 +14,12 @@ const string db = "banking";
     
 
 
-bool createUser(userDetails user, string role) {
+int createUser(userDetails user, string role) {
 
     Statement* stmt;
     PreparedStatement* pstmt;
+    ResultSet* res;
+
 
     driver = get_driver_instance();
 
@@ -27,26 +29,49 @@ bool createUser(userDetails user, string role) {
     try {
         stmt = con->createStatement();
         stmt->execute("use " + db);
-       
-        pstmt = con->prepareStatement("insert into users(fname, lname, gender, amount) values (?,?,?,?)");
-        string gend;
-        gend += user.gender;
-        pstmt->setString(1, user.fName);
-        pstmt->setString(2, user.lName);
-        pstmt->setString(3, gend);
-        pstmt->setInt(4, user.amount);
-       
-     
-        pstmt->execute();
+        if (role == "user") {
+            pstmt = con->prepareStatement("insert into users(fname, lname, gender, amount) values (?,?,?,?)");
+            string gend;
+            gend += user.gender;
+            pstmt->setString(1, user.fName);
+            pstmt->setString(2, user.lName);
+            pstmt->setString(3, gend);
+            pstmt->setInt(4, user.amount);
 
-        return true;
+
+            pstmt->execute();
+            res = stmt->executeQuery("select * from users where accountNumber = (select max(accountNumber) from users)");
+        }
+        else {
+            pstmt = con->prepareStatement("insert into staff (fname, lname, role) values (?,?, 'staff')");
+  
+             
+            pstmt->setString(1, user.fName);
+            pstmt->setString(2, user.lName);
+           
+
+
+            pstmt->execute();
+            res = stmt->executeQuery("select * from staff where staffId = (select max(staffId) from staff)");
+        }
+        while (res->next()) {
+            if (role == "user") {
+                cout << "The account number is " << res->getInt(1)<<endl;
+            }
+            else {
+                cout << "The staff id number is " << res->getInt(1) << endl;
+            }
+            return res->getInt(1);
+        }
+
+        return 0;
     }
     catch (SQLException e) {
         cout << "**********" << e.what() << endl;
-        return false;
+        return 0;
         
     }
-
+   
 }
 
 
@@ -66,31 +91,44 @@ userDetails fetchUser(string userName, string role) {
         stmt = con->createStatement();
 
         stmt->execute("use " + db);
+        if (role == "user") {
+
+            res = stmt->executeQuery("select * from users where accountNumber = " + userName);
 
 
-        res = stmt->executeQuery("select * from users where accountNumber = " + userName);
 
-        
+            while (res->next()) {
+                
 
-        while (res->next()) {
-            if (role == "user") {
-                user.accountNumber = res->getInt(1);
+                user.fName = res->getString(2);
+                user.lName = res->getString(3);
+                user.gender = res->getString(4)[0];
+                user.amount = res->getInt(5);
+                user.password = res->getString(6);
+                user.isActive = res->getBoolean(7);
+
+
+                user.isFound = true;
+                return user;
             }
-            
-        
-            user.fName = res->getString(2);
-            user.lName = res->getString(3);
-            user.gender = res->getString(4)[0];
-            user.amount = res->getInt(5);
-            user.password = res->getString(6);
-            user.isActive = res->getBoolean(7);
-            
-            
-            user.isFound = true;
-            return user;
         }
-        
+        else {
+            res = stmt->executeQuery("select * from staff where staffId = " + userName);
 
+
+
+            while (res->next()) {
+               
+
+                user.fName = res->getString(2);
+                user.lName = res->getString(3);
+                user.password = res->getString(4);
+
+                user.isActive = true;
+                user.isFound = true;
+                return user;
+            }
+        }
 
 
 
